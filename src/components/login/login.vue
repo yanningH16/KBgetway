@@ -1,31 +1,29 @@
 <template>
-  <div class="login" @keyup.13="LogoIn">
+  <div class="login">
     <div class="logo">
-      <img src="../../assets/images/ico.png" alt="logo">
-      <span>抱 一 云 信</span>
+      <!-- <img src="../../assets/image/logob.png" alt="logo"> -->
     </div>
     <div class="cont">
-      <div class="text">
-        <h1>数 据 智 能&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;驱 动 未 来</h1>
-      </div>
       <div class="board">
         <h2>登&nbsp;录</h2>
-        <div class="inputCont">
-          <div class="input" :class="{ 'active': focus }">
-            <img src="../../assets/images/phone.png" alt="">
-            <input type="number" placeholder="输入手机号" v-model="username" @focus="focus=true" @blur="focus=false" autofocus autocomplete="on">
+        <div class="inputCont" @keyup.13="login">
+          <div class="input">
+            <span class="el-icon-edit"></span>
+            <input type="text" placeholder="输入用户名" v-model="username">
           </div>
-          <div class="input" :class="{ 'active': focusPass }">
-            <img src="../../assets/images/password.png" alt="">
-            <input type="password" placeholder="输入登录密码" v-model="password" @focus="focusPass=true" @blur="focusPass=false">
+          <div class="input">
+            <span class="el-icon-edit-outline"></span>
+            <input type="password" placeholder="输入登录密码" v-model="password">
           </div>
-          <button @click="LogoIn">登&nbsp;录</button>
-          <h3>
-            <span class="hover">
-              <router-link :to="{ name: 'sign', params: { userId: 123 }}">忘记密码 &nbsp;| &nbsp;</router-link>
-              <router-link :to="{ name: 'reg', params: { userId: 123 }}">立即注册</router-link>
-            </span>
-          </h3>
+          <button @click="login">登&nbsp;录</button>
+          <!-- <h3>
+            <router-link :to="{name:'Password'}">
+              <span>忘记密码</span>
+            </router-link>
+            <router-link :to="{name:'reg'}">
+              <span style="margin-right:20px">注册</span>
+            </router-link>
+          </h3> -->
         </div>
       </div>
     </div>
@@ -40,30 +38,40 @@ export default {
     return {
       username: '',
       password: '',
-      focus: false,
-      focusPass: false
+      ip: ''
     }
   },
   methods: {
-    LogoIn () {
+    getIp () {
+      this.$ajax.get('/ipApi'
+      ).then((data) => {
+        if (data.status === 200 || data.statusText === 'OK') {
+          this.ip = data.data.ip
+        }
+      }).catch((err) => {
+        console.error(err)
+      })
+    },
+    login () {
       if (this.username === '' || this.password === '') {
         this.$message({
-          message: '请输入正确用户名或密码！',
+          message: '请输入正确用户名或密码',
           type: 'warning'
         })
         return false
       } else if (this.password.length < 6) {
         this.$message({
-          message: '密码至少6位！',
+          message: '密码不少于6位',
           type: 'warning'
         })
         return false
       } else {
-        this.$ajax.post('/api/user/login', {
-          telephone: this.username,
-          password: md5(this.password)
-        }).then(data => {
-          console.log(data)
+        // 登录
+        this.$ajax.post('/api/channel/login', {
+          userName: this.username,
+          password: md5(this.password),
+          ip: this.ip
+        }).then((data) => {
           if (data.data.code === '200') {
             this.setUserInfo(data.data.data)
             this.setUserToken(data.headers.accesstoken)
@@ -71,7 +79,7 @@ export default {
               message: '登录成功,页面跳转中...',
               type: 'success',
               onClose: () => {
-                this.$router.push({ name: 'index' })
+                this.$router.push({ path: '/home' })
               }
             })
           } else {
@@ -80,7 +88,8 @@ export default {
               type: 'warning'
             })
           }
-        }).catch(() => {
+        }).catch((err) => {
+          console.log(err)
           this.$message.error('服务器错误！')
         })
       }
@@ -89,6 +98,9 @@ export default {
       'setUserInfo',
       'setUserToken'
     ])
+  },
+  mounted () {
+    this.getIp()
   }
 }
 </script>
@@ -98,30 +110,27 @@ export default {
   min-width 800px
   width 100%
   height 100%
-  background url('../../assets/images/bg.png')
+  background #f8f8f8
   .logo
     color #ffffff
-    height 33px
+    height 75px
     padding 26px 45px
     overflow hidden
     img
-      height 60px
-      line-height 36.5px
-      opacity 37.53
+      height 75px
       float left
       vertical-align middle
-      margin-top -11px
     span
       font-size 18px
-      line-height 30px
+      line-height 33px
       margin-left 12px
-      float left
-      margin-top 5px
+      color #FF2933
   .cont
     display flex
     justify-content space-around
     align-content center
     height calc(100% - 200px)
+    background linear-gradient(rgba(247, 181, 188, 1), rgba(242, 162, 170, 1))
     .text
       align-self center
       font-size 24px
@@ -130,29 +139,27 @@ export default {
     .board
       align-self center
       background #ffffff
-      border 1px solid #BAC6DC
+      border 1px solid #cccccc
       box-shadow 0 1px 12px rgba(255, 255, 255, 0.5)
       h2
         font-size 24px
-        color #525F75
+        color #7c7c7c
         line-height 60px
         box-shadow 0 1px 0 #cfc9c9
         text-align center
-        font-weight 500
       .inputCont
         padding 30px
         .input
           width 310px
           height 22px
-          border 1px solid #BAC6DC
+          border 1px solid #cccccc
           padding 15px 8px
           margin-bottom 16px
-          img
+          span
             display inline-block
-            // width 24px
+            width 24px
             height 24px
             text-align center
-            vertical-align middle
           input
             width 250px
             margin-left 15px
@@ -160,14 +167,6 @@ export default {
             border none
             font-size 16px
             line-height 22px
-          :-moz-placeholder /* Mozilla Firefox 4 to 18 */
-            color lightgray
-          ::-moz-placeholder /* Mozilla Firefox 19+ */
-            color lightgray
-          input:-ms-input-placeholder
-            color lightgray
-          input::-webkit-input-placeholder
-            color lightgray
         button
           width 100%
           border none
@@ -175,22 +174,21 @@ export default {
           line-height 52px
           color #ffffff
           font-size 16px
-          background #40b6ff
+          background #ff3341
           cursor pointer
           border-radius 2px
           margin-bottom 16px
           &:hover
-            background #40b6f2
+            background #ff3341
+          &:active
+            color white
         h3
           overflow hidden
           span
-            font-size 14px
+            font-size 12px
             float right
             line-height 38px
             cursor pointer
-            color #525F75
-            // :hover
-            // color #40b6ff
-        .active
-          border 1px solid #40b6f2
+            &:hover
+              color red
 </style>

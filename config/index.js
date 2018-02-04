@@ -10,10 +10,27 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api': {
+        target: 'http://182.61.29.51:8089', // 测试环境
+        // target: 'http://182.61.24.42:8089', // 线上
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
+      },
+      '/ipApi': { // 获取ip地址
+        target: 'http://freegeoip.net/json/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/ipApi': '/'
+        }
+      },
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
+    // host: '10.0.0.11',
     port: 8021, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,

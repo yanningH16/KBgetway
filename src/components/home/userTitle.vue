@@ -25,6 +25,7 @@
         <b class="head">
           Y
         </b>
+        <span>{{ userInfo.userName || userInfo.telephone }}</span>
         <a class="el-icon-arrow-down"></a>
         <transition :name="showInfo ? 'el-fade-in-linear' : 'el-fade-in'">
           <ul class="operate" :class="{ 'fadeIn': showInfo, 'fadeOut': !showInfo }" v-show="showInfo">
@@ -97,11 +98,11 @@ export default {
       })
     },
     fixPass () {
-      this.$ajax.post('/api/user/changePwd', {
-        telephone: this.userInfo.telephone,
+      this.$ajax.post('/api/channel/changePwd', {
+        channelAccountId: this.userInfo.channelAccountId,
         oldPwd: md5(this.fixPassObj.oldpass),
         newPwd: md5(this.fixPassObj.newpass1),
-        repeatPwd: md5(this.fixPassObj.newpass2)
+        rePwd: md5(this.fixPassObj.newpass2)
       }).then((data) => {
         if (data.data.code === '200') {
           this.$message({

@@ -12,7 +12,7 @@ clearErrorTimeList()
 axios.interceptors.request.use((config) => {
   if (store.state.userInfo) {
     config.headers.accesstoken = store.state.userToken //    请求接口header参数添加
-    config.headers.userAccountId = store.state.userInfo.userId
+    config.headers.userAccountId = store.state.userInfo.channelAccountId
   }
   return config
 }, (error) => {

@@ -2,7 +2,7 @@
   <div class="menu">
     <div class="logo">
       <!-- <img src="../../assets/images/ico.png" alt="logo"> -->
-      <span>分站管理系统</span>
+      <span>渠道管理系统</span>
     </div>
     <div class="router">
       <div class="routerBox" v-for="(item,index) in menus" :key="index" ref="routerBox">
