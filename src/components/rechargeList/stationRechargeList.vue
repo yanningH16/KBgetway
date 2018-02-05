@@ -4,7 +4,7 @@
     <div class="search">
       <div class="left">
         <span>付款方式</span>
-        <el-select v-model="payWay" style="width:180px;" placeholder="请选择">
+        <el-select v-model="payType" style="width:180px;margin-right:20px;" placeholder="请选择">
           <el-option label="全部" value="">
           </el-option>
           <el-option label="支付宝转账" value="1">
@@ -12,7 +12,18 @@
           <el-option label="网银转账" value="2">
           </el-option>
         </el-select>
-        <em class="btn">查询</em>
+        <span>充值状态</span>
+        <el-select v-model="rechargeStatus" style="width:180px;margin-right:20px;" placeholder="请选择">
+          <el-option label="全部" value="">
+          </el-option>
+          <el-option label="成功" value="1">
+          </el-option>
+          <el-option label="失败" value="0">
+          </el-option>
+        </el-select>
+        <span>分站ID</span>
+        <el-input v-model="substationId" style="width:180px;" placeholder="请输入"></el-input>
+        <em class="btn" @click="getList">查询</em>
       </div>
     </div>
     <div class="table">
@@ -51,29 +62,45 @@
       </el-table>
     </div>
     <div class="pager">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="400">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
       </el-pagination>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { pageCommon } from '../../assets/js/mixin'
+import { mapGetters } from 'vuex'
 export default {
   name: 'stationRechargeList',
+  mixins: [pageCommon],
   data () {
     return {
       currentPage: 1,
-      payWay: '',
-      tableData: [{
-        userName: 'fgsaasgas'
-      }]
+      apiUrl: '/api/substation/recharge/getRechargeListForChannelId',
+      rechargeStatus: '',
+      substationId: '',
+      payType: '',
+      tableData: []
     }
   },
-  methods: {
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+  computed: {
+    params () {
+      return {
+        payType: this.payType,
+        rechargeStatus: this.rechargeStatus,
+        channelId: this.userInfo.channelId,
+        substationId: this.substationId,
+        pageNo: this.pageNo,
+        pageSize: this.pageSize
+      }
     },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
+  methods: {
+    setList (data) {
+      this.tableData = data
     }
   }
 }

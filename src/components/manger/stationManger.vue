@@ -13,31 +13,33 @@
     </div>
     <div class="table">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column fixed="left" prop="userName" label="站点ID" align="center" width="100">
+        <el-table-column fixed="left" prop="substationId" label="站点ID" align="center" width="185">
         </el-table-column>
-        <el-table-column prop="userName" label="站点名称" align="center" width="200">
+        <el-table-column prop="name" label="站点名称" align="center" width="200">
         </el-table-column>
-        <el-table-column prop="userName" label="单价" align="center" width="120">
+        <el-table-column prop="price" label="单价" align="center" width="120">
           <template slot-scope="scope">
-            <span style="font-size:12px;">圆通: 2.50</span>
+            <span style="font-size:12px;">圆通: {{ scope.row.price }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" label="账户余额" align="center" width="120">
+        <el-table-column prop="balance" label="账户余额" align="center" width="120">
         </el-table-column>
-        <el-table-column prop="userName" label="累计充值" align="center" width="120">
+        <el-table-column prop="rechargeSum" label="累计充值" align="center" width="120">
         </el-table-column>
-        <el-table-column prop="userName" label="收款帐号" align="center" width="200">
+        <el-table-column prop="recipetAccount" label="收款帐号" align="center" width="200">
           <template slot-scope="scope">
             <div style="text-align:left;">
-              <p>6214 8557 1932 5405 ------战警 ------招行杭州海创元小薇企业专营支行</p>
+              <p>{{ scope.row.recipetContent }}</p>
               <p>转账(注意: 本站收款账号不 定时更换请每次转账前核对 收款账号)</p>
               <p>到账时间: 转账后请联系站长帮您充值</p>
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" label="客服QQ" align="center" width="120">
+        <el-table-column prop="serviceQq" label="客服QQ" align="center" width="120">
         </el-table-column>
-        <el-table-column prop="userName" label="客服电话" align="center" width="120">
+        <el-table-column prop="serviceWechatNum" label="客服微信" align="center" width="120">
+        </el-table-column>
+        <el-table-column prop="servicePhone" label="客服电话" align="center" width="120">
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center" width="120">
           <template slot-scope="scope">
@@ -54,11 +56,11 @@
             </el-dropdown>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" label="域名" align="center" width="120">
+        <el-table-column prop="domainName" label="域名" align="center" width="120">
         </el-table-column>
-        <el-table-column prop="userName" label="管理员" align="center" width="120">
+        <el-table-column prop="adminUserName" label="管理员" align="center" width="120">
         </el-table-column>
-        <el-table-column prop="userName" label="添加时间" align="center" width="120">
+        <el-table-column prop="gmtCreate" label="添加时间" align="center" width="180">
         </el-table-column>
       </el-table>
     </div>
@@ -72,9 +74,13 @@
           <span>金额</span>
           <el-input v-model="rechargeObj.money" style="width:300px;margin-left:10px;" placeholder="请输入内容"></el-input>
         </div>
+        <div class="cont" style="text-align:center;margin-top:20px;">
+          <span>备注</span>
+          <el-input v-model="rechargeObj.common" style="width:300px;margin-left:10px;" placeholder="请输入内容"></el-input>
+        </div>
         <div class="buttons" style="text-align:center;margin-top:40px;">
           <span class="btn-b" style="margin-right:10px;" @click="rechargeObj.show = false">取消</span>
-          <span class="btn" @click="rechargeObj.show = false">确定</span>
+          <span class="btn" @click="sureToRecharge">确定</span>
         </div>
       </el-dialog>
       <el-dialog title="扣除余额" :append-to-body="true" :visible.sync="deleMoneyObj.show" width="600px" top="25vh">
@@ -82,9 +88,13 @@
           <span>金额</span>
           <el-input v-model="deleMoneyObj.money" style="width:300px;margin-left:10px;" placeholder="请输入内容"></el-input>
         </div>
+        <div class="cont" style="text-align:center;margin-top:20px;">
+          <span>备注</span>
+          <el-input v-model="deleMoneyObj.common" style="width:300px;margin-left:10px;" placeholder="请输入内容"></el-input>
+        </div>
         <div class="buttons" style="text-align:center;margin-top:40px;">
           <span class="btn-b" style="margin-right:10px;" @click="deleMoneyObj.show = false">取消</span>
-          <span class="btn" @click="deleMoneyObj.show = false">确定</span>
+          <span class="btn" @click="sureToDele">确定</span>
         </div>
       </el-dialog>
       <el-dialog :title="stationSetObj.type==0 ? '编辑分站' : '添加分站'" :append-to-body="true" :visible.sync="stationSetObj.show" width="600px" top="5vh">
@@ -103,11 +113,7 @@
         <div class="cont" style="text-align:center;margin-top:20px;">
           <span style="display:inline-block;width:70px;text-align:right;">收款卡银行</span>
           <el-select v-model="stationSetObj.getBankName" style="width:400px;margin-left:10px;" placeholder="请选择">
-            <el-option label="中国银行" value="1">
-            </el-option>
-            <el-option label="招商银行" value="2">
-            </el-option>
-            <el-option label="建设银行" value="3">
+            <el-option v-for="(item,index) in bankArr" :key="index" :label="item.bankName" :value="item.bankName">
             </el-option>
             <el-option label="其他" value="999">
             </el-option>
@@ -174,15 +180,18 @@ export default {
   mixins: [pageCommon],
   data () {
     return {
-      apiUrl: '/api/substation/getPagingListByChannelName',
+      apiUrl: '/api/substation/getPagingListBySubstationName',
+      bankArr: [],
       substationName: '', // 搜索名
       currentPage: 1,
       rechargeObj: {
         show: false,
+        common: '',
         money: ''
       },
       deleMoneyObj: {
         show: false,
+        common: '',
         money: ''
       },
       stationSetObj: {
@@ -211,6 +220,7 @@ export default {
   computed: {
     params () {
       return {
+        channelId: this.userInfo.channelId,
         substationName: this.substationName,
         pageNo: this.pageNo,
         pageSize: this.pageSize
@@ -221,27 +231,105 @@ export default {
     ])
   },
   methods: {
+    getBank () {
+      this.$ajax.post('/api/config/bankCard/getBankInfoList', {
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.bankArr = data.data.data
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.error(err)
+      })
+    },
+    // 确认充值
+    sureToRecharge () {
+      this.$ajax.post('/api/substation/recharge/addMoneyToSubstationFund', {
+        money: this.rechargeObj.money,
+        comment: this.rechargeObj.common,
+        substationId: this.rechargeObj.row.substationId,
+        operateUserId: this.userInfo.channelAccountId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.rechargeObj.show = false
+          this.getList()
+          this.$message({
+            message: '操作成功!',
+            type: 'success'
+          })
+          for (let m in this.rechargeObj) {
+            if (!(m === 'show')) {
+              this.rechargeObj[m] = ''
+            }
+          }
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 确认扣除金额
+    sureToDele () {
+      this.$ajax.post('/api/substation/recharge/reduceMoneyFromSubstationFund', {
+        money: this.deleMoneyObj.money,
+        comment: this.deleMoneyObj.common,
+        substationId: this.deleMoneyObj.row.substationId,
+        operateUserId: this.userInfo.channelAccountId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.deleMoneyObj.show = false
+          this.getList()
+          this.$message({
+            message: '操作成功!',
+            type: 'success'
+          })
+          for (let m in this.deleMoneyObj) {
+            if (!(m === 'show')) {
+              this.deleMoneyObj[m] = ''
+            }
+          }
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$message.error('服务器错误！')
+      })
+    },
     userSet (command) {
-      if (command[1] === 0) {
+      if (command[1] === 0) { // 添加金额
         this.rechargeObj.show = true
-      } else if (command[1] === 1) {
+        this.rechargeObj.row = command[0]
+      } else if (command[1] === 1) { // 编辑分站信息
         this.stationSetObj.type = 0
         let row = command[0]
         this.stationSetObj = {
           show: this.stationSetObj.show,
           type: this.stationSetObj.type,
-          stationId: row.stationId,
-          stationName: row.substationName,
+          stationId: row.substationId,
+          stationName: row.name,
           getAccount: row.recipetAccount,
-          payer: row.recipetName,
+          payer: row.recipetUserName,
           getBankName: row.recipetBankName,
           otherBankName: row.recipetBankName,
           kefuChat: row.serviceWechatNum,
-          kefuQQ: row.serviceQQ,
-          kefuPhone: row.serviceTelephone,
+          kefuQQ: row.serviceQq,
+          kefuPhone: row.servicePhone,
           siterName: row.masterName,
-          siterPhone: row.masterTelephone,
-          siterQQ: row.masterQQ,
+          siterPhone: row.masterPhone,
+          siterQQ: row.masterQq,
           stationAddress: row.domainName,
           adminPassword: row.adminPassword,
           yuantongPrice: row.price,
@@ -250,9 +338,15 @@ export default {
         this.stationSetObj.show = true
       } else if (command[1] === 2) { // 添加分站
         this.stationSetObj.type = 1
+        for (let m in this.stationSetObj) {
+          if (!(m === 'type' || m === 'show')) {
+            this.stationSetObj[m] = ''
+          }
+        }
         this.stationSetObj.show = true
-      } else if (command[1] === 3) {
+      } else if (command[1] === 3) { // 扣除金额
         this.deleMoneyObj.show = true
+        this.deleMoneyObj.row = command[0]
       }
     },
     setList (data) {
@@ -267,6 +361,7 @@ export default {
         url = '/api/substation/addSubstation'
       }
       this.$ajax.post(url, {
+        substationId: this.stationSetObj.stationId,
         substationName: this.stationSetObj.stationName,
         recipetContent: (this.stationSetObj.getBankName === '999' ? this.stationSetObj.otherBankName : this.stationSetObj.getBankName) + '-' + this.stationSetObj.payer + '-' + this.stationSetObj.getAccount,
         serviceQQ: this.stationSetObj.kefuQQ,
@@ -283,7 +378,7 @@ export default {
         channelAccountId: this.userInfo.channelAccountId,
         recipetName: this.stationSetObj.payer,
         recipetAccount: this.stationSetObj.getAccount,
-        recipetBankName: this.stationSetObj.getBankName
+        recipetBankName: (this.stationSetObj.getBankName === '999' ? this.stationSetObj.otherBankName : this.stationSetObj.getBankName)
       }).then((data) => {
         if (data.data.code === '200') {
           this.stationSetObj.show = false
@@ -294,7 +389,7 @@ export default {
           })
           for (let m in this.stationSetObj) {
             if (!(m === 'type' || m === 'show')) {
-              m = ''
+              this.stationSetObj[m] = ''
             }
           }
         } else {
@@ -308,6 +403,9 @@ export default {
         this.$message.error('服务器错误！')
       })
     }
+  },
+  mounted () {
+    this.getBank()
   }
 }
 </script>
