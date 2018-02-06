@@ -100,7 +100,7 @@
       <el-dialog :title="stationSetObj.type==0 ? '编辑分站' : '添加分站'" :append-to-body="true" :visible.sync="stationSetObj.show" width="600px" top="5vh">
         <div v-if="stationSetObj.type==0" class="cont" style="text-align:center;">
           <span style="display:inline-block;width:70px;text-align:right;">站点编码</span>
-          <el-input v-model="stationSetObj.stationId" style="width:400px;margin-left:10px;" placeholder="请输入内容"></el-input>
+          <el-input v-model="stationSetObj.stationId" :disabled="stationSetObj.type==0" style="width:400px;margin-left:10px;" placeholder="请输入内容"></el-input>
         </div>
         <div class="cont" style="text-align:center;margin-top:20px;">
           <span style="display:inline-block;width:70px;text-align:right;">分站名称</span>
@@ -149,7 +149,11 @@
           <span style="display:inline-block;width:70px;text-align:right;">站长QQ</span>
           <el-input v-model="stationSetObj.siterQQ" style="width:400px;margin-left:10px;" placeholder="请输入内容"></el-input>
         </div>
-        <div class="cont" style="text-align:center;margin-top:20px;">
+        <div class="cont" v-if="stationSetObj.type==0" style="text-align:center;margin-top:20px;">
+          <span style="display:inline-block;width:70px;text-align:right;">分站域名</span>
+          <el-input v-model="stationSetObj.stationAddress" style="width:400px;margin-left:10px;" placeholder="请输入内容"></el-input>
+        </div>
+        <div class="cont" v-if="stationSetObj.type==1" style="text-align:center;margin-top:20px;">
           <span style="display:inline-block;width:70px;text-align:right;">分站域名</span>
           <el-input v-model="stationSetObj.stationAddress" style="width:153px;margin-left:10px;" placeholder="请输入内容"></el-input>
           <span style="display:inline-block;width:70px;text-align:right;">管理员密码</span>
@@ -372,7 +376,7 @@ export default {
         masterQQ: this.stationSetObj.siterQQ,
         domainName: this.stationSetObj.stationAddress,
         adminUserName: this.stationSetObj.adminAccount,
-        adminPassword: md5(this.stationSetObj.adminPassword),
+        adminPassword: this.stationSetObj.adminPassword ? md5(this.stationSetObj.adminPassword) : '',
         price: this.stationSetObj.yuantongPrice,
         channelId: this.userInfo.channelId,
         channelAccountId: this.userInfo.channelAccountId,
