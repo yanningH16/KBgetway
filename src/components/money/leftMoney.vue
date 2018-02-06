@@ -25,7 +25,7 @@
     <div class="contentDelit">
       <h3>待处理充值
         <span class="balance">您的押金账户余额:
-          <em style="color:rgba(255,51,65,1)">500</em>元</span>
+          <em style="color:rgba(255,51,65,1)">{{getMon}}</em>元</span>
       </h3>
       <div class="line"></div>
       <div class="actTab">
@@ -44,11 +44,11 @@
           </el-table-column>
           <el-table-column prop="JDStatus" align="center" label="充值状态">
             <template slot-scope="scope">
-              <span class="tipDoing" v-if="scope.row.JDStatus==='1'">等待付款</span>
-              <span class="tipDoing" v-if="scope.row.JDStatus==='3'">确认中</span>
+              <span class="tipWiat" v-if="scope.row.JDStatus==='1'">等待付款</span>
+              <span class="tipWiat" v-if="scope.row.JDStatus==='3'">确认中</span>
               <span class="tipError" v-if="scope.row.JDStatus==='4'">充值失败</span>
-              <span class="tipDoing" v-if="scope.row.JDStatus==='5'">订单取消</span>
-              <span class="tipSuccess" v-if="scope.row.JDStatus==='6'">充值完成</span>
+              <span class="tipError" v-if="scope.row.JDStatus==='5'">订单取消</span>
+              <span class="tipError" v-if="scope.row.JDStatus==='6'">充值完成</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">
@@ -162,8 +162,9 @@ export default {
       recipet: {},
       tableData: [],
       options: [],
+      getMon: '',
       item: '',
-      apiUrl: '/api/substation/recharge/getRechargeListBySubstationId'
+      apiUrl: '/api/channel/recharge/getRechargeListByChannel'
     }
   },
   created () {
@@ -171,14 +172,14 @@ export default {
     this.pointNum = Math.round(Math.random() * 99)
   },
   mounted () {
-    // this.getMoney()
+    this.getMoney()
   },
   computed: {
     params () {
       return {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        subsationId: this.userInfo.substationId
+        channelId: this.userInfo.channelId
       }
     },
     ...mapGetters([
@@ -188,23 +189,23 @@ export default {
   },
   methods: {
     // 获取资金
-    // getMoney () {
-    //   this.$ajax.post('/api/userFund/getSellerUserFund', {
-    //     sellerUserAccountId: this.userInfo.sellerUserId
-    //   }).then((data) => {
-    //     if (data.data.code === '200') {
-    //       let res = data.data.data
-    //       this.setUserMoney(res)
-    //     } else {
-    //       this.$message({
-    //         type: 'warning',
-    //         message: data.data.message
-    //       })
-    //     }
-    //   }).catch((err) => {
-    //     console.log(err)
-    //   })
-    // },
+    getMoney () {
+      this.$ajax.post('/api/channel/getBalance', {
+        channelId: this.userInfo.channelId
+      }).then((data) => {
+        console.log(data)
+        if (data.data.code === '200') {
+          this.getMon = data.data.data.balance
+        } else {
+          this.$message({
+            type: 'warning',
+            message: data.data.message
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
     doCopy () {
       var clipboard = new Clipboard('.copy')
       clipboard.on('success', (e) => {
@@ -216,6 +217,7 @@ export default {
     },
     // 当点击生成充值单 获取到充值单的信息
     getChargeInfo () {
+      this.addBank()
       if (this.item.value === '' || this.input4 === '') {
         this.$message({
           message: '请正确填写充值信息',
@@ -231,7 +233,7 @@ export default {
     // 当点击生确认转账的时候触发的事件
     transferMoney () {
       this.$ajax.post('/api/channel/recharge/addRechargeSheet', {
-        userId: this.userInfo.substationAccountId,
+        userId: this.userInfo.channelAccountId,
         payingBankName: this.getBankInfo.payBankName,
         payingUserName: this.getBankInfo.payName,
         payingCardNo: this.getBankInfo.payAccount,
@@ -244,12 +246,28 @@ export default {
         console.log(data)
         let res = data.data
         if (res.code === '200') {
-          this.$message({
-            message: '充值成功',
-            type: 'success'
+          this.$ajax.post('/api/channel/recharge/confirmAlreadyPaid', {
+            rechargeId: res.data.rechargeId
+          }).then((data) => {
+            let res = data.data
+            if (res.code === '200') {
+              this.$message({
+                message: '充值成功',
+                type: 'success'
+              })
+              this.dialogVisible = false
+              this.getList()
+              this.input3 = ''
+            } else {
+              this.$message({
+                message: data.data.message,
+                type: 'error'
+              })
+            }
+          }).catch((err) => {
+            console.log(err)
+            this.$message.error('未知错误！')
           })
-          this.dialogVisible = false
-          // this.getTask(1, this.pageSize)
         } else {
           this.$message({
             message: data.data.message,
@@ -275,9 +293,11 @@ export default {
             name: res.data.name,
             payAccount: res.data.payAccount,
             payBankName: res.data.payBankName,
-            payName: res.data.payName
+            payName: res.data.payName,
+            random6: res.data.random6
           }
           this.item = res.data.payName + ' ' + res.data.payBankName + ' ' + res.data.payAccount
+          this.input3 = res.data.random6
         } else {
           this.$message({
             message: data.data.message,
@@ -310,7 +330,7 @@ export default {
     handleClick (index, data) {
       console.log(index, data)
       this.toview = true
-      this.$ajax.post('/api/substation/recharge/getRechargeSheetByRechargeId', {
+      this.$ajax.post('/api/channel/recharge/getRechargeSheetByRechargeId', {
         rechargeId: this.tableData[index].payWater
       }).then((data) => {
         console.log(data)

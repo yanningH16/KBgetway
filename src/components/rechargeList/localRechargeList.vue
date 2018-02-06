@@ -15,26 +15,32 @@
     </div>
     <div class="table">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="address" label="充值编号" align="center">
+        <el-table-column prop="rechargeId" label="充值编号" align="center">
         </el-table-column>
-        <el-table-column prop="address" label="交易号" align="center">
+        <!-- <el-table-column prop="address" label="交易号" align="center">
+        </el-table-column> -->
+        <el-table-column prop="payTypeDetail" label="付款方式" align="center">
         </el-table-column>
-        <el-table-column prop="address" label="付款方式" align="center">
+        <el-table-column prop="money" label="充值金额" align="center">
         </el-table-column>
-        <el-table-column prop="address" label="充值金额" align="center">
-        </el-table-column>
-        <el-table-column prop="address" label="充值前金额" align="center">
-        </el-table-column>
-        <el-table-column prop="address" label="充值后金额" align="center">
-        </el-table-column>
-        <el-table-column prop="address" label="充值状态" align="center">
+        <el-table-column prop="beforMoney" label="充值前金额" align="center">
           <template slot-scope="scope">
-            <span class="template">充值成功</span>
+            <span class="template">{{scope.row.beforMoney||'--'}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="充值时间" align="center">
+        <el-table-column prop="afterMoney" label="充值后金额" align="center">
+          <template slot-scope="scope">
+            <span class="template">{{scope.row.afterMoney||'--'}}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="address" label="备注" align="center">
+        <el-table-column prop="stautsDetail" label="充值状态" align="center">
+          <!-- <template slot-scope="scope">
+            <span class="template">充值成功</span>
+          </template> -->
+        </el-table-column>
+        <el-table-column prop="gmtCreate" label="充值时间" align="center">
+        </el-table-column>
+        <el-table-column prop="comment" label="备注" align="center">
         </el-table-column>
       </el-table>
     </div>
