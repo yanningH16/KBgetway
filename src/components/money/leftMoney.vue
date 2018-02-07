@@ -81,7 +81,7 @@
         </p>
         <p>
           <span>转款备注/附言/摘要填写</span>
-          <el-input v-model="input3" disabled></el-input>
+          <el-input v-model="input3" disabled></el-input></el-input>
           <span class="star">*必填</span>
           <span class="blue copy" :data-clipboard-text='input3' @click="doCopy">复制</span>
         </p>
