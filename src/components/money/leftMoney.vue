@@ -69,19 +69,19 @@
       <el-dialog title="生产充值单" :visible.sync="dialogVisible" width="600px" :modal-append-to-body='false'>
         <p>
           <span style="margin-left:22px">请用您的这张银行卡</span>
-          <el-input v-model="input"></el-input>
+          <el-input v-model="input" disabled></el-input>
         </p>
         <p>
           <span style="margin-left:64px">向这张银行卡</span>
-          <el-input v-model="input1"></el-input>
+          <el-input v-model="input1" disabled></el-input>
         </p>
         <p>
           <span style="margin-left:120px">转款</span>
-          <el-input v-model="input2"></el-input>元
+          <el-input v-model="input2" disabled></el-input>元
         </p>
         <p>
           <span>转款备注/附言/摘要填写</span>
-          <el-input v-model="input3"></el-input>
+          <el-input v-model="input3" disabled></el-input>
           <span class="star">*必填</span>
           <span class="blue copy" :data-clipboard-text='input3' @click="doCopy">复制</span>
         </p>
@@ -221,6 +221,13 @@ export default {
       if (this.item.value === '' || this.input4 === '') {
         this.$message({
           message: '请正确填写充值信息',
+          type: 'warning'
+        })
+        return false
+      }
+      if (this.input4 < 100) {
+        this.$message({
+          message: '单次充值不少于100元',
           type: 'warning'
         })
         return false
