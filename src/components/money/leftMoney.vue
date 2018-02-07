@@ -48,7 +48,7 @@
               <span class="tipWiat" v-if="scope.row.JDStatus==='3'">确认中</span>
               <span class="tipError" v-if="scope.row.JDStatus==='4'">充值失败</span>
               <span class="tipError" v-if="scope.row.JDStatus==='5'">订单取消</span>
-              <span class="tipError" v-if="scope.row.JDStatus==='6'">充值完成</span>
+              <span class="tipSuccess" v-if="scope.row.JDStatus==='6'">充值完成</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">
