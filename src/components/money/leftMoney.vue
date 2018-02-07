@@ -81,8 +81,7 @@
         </p>
         <p>
           <span>转款备注/附言/摘要填写</span>
-          <el-input v-model="input3" disabled></el-input></el-input>
-          <span class="star">*必填</span>
+          <el-input v-model="input3" disabled></el-input>
           <span class="blue copy" :data-clipboard-text='input3' @click="doCopy">复制</span>
         </p>
         <p style="margin-top:20px">1.备注/附言/摘要中严格要求填写,每一次充值的编码都会变更,请核对后填写<br>2.支付宝不予审核<br>3.审核时间:周一至周五9:00-18:00 如遇节假日顺延,请合理安排充值时间<br>4.转款后无需私聊,工作日,30分钟内即可到款</p>
