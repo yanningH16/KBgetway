@@ -6,7 +6,7 @@
     </div>
     <div class="router">
       <div class="routerBox" v-for="(item,index) in menus" :key="index" ref="routerBox">
-        <router-link tag="div" :to="{name:item.router}" class="routerHeader" v-if="!item.children">
+        <router-link tag="div" :to="{name:item.router}" @click.native="refresh(item.router)" class="routerHeader" v-if="!item.children">
           <span class="icon iconfont" :class="item.icon"></span>
           <span class="text">{{item.header}}</span>
         </router-link>
@@ -18,7 +18,7 @@
         </div>
         <el-collapse-transition>
           <div class="childRouter" v-if="item.children" v-show="chooseIndexArray.includes(index)">
-            <router-link tag="div" :to="{name:childItem.router}" class="childBox" v-for="(childItem,childIndex) in item.children" :key="childIndex">
+            <router-link tag="div" :to="{name:childItem.router}" @click.native="refresh(childItem.router)" class="childBox" v-for="(childItem,childIndex) in item.children" :key="childIndex">
               <span class="icon iconfont" :class="childItem.icon"></span>
               <span class="text">{{childItem.header}}</span>
             </router-link>
@@ -91,6 +91,11 @@ export default {
         }
       } else {
         this.chooseIndexArray.push(index)
+      }
+    },
+    refresh (routerName) {
+      if (this.$route.name === routerName) {
+        this.$router.go(0)
       }
     }
   }
