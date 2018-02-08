@@ -53,7 +53,7 @@ export default {
           },
           {
             icon: 'icon-qianmingguanli',
-            header: '本站充值记录',
+            header: '我的充值记录',
             router: 'localRechargeList'
           },
           {
