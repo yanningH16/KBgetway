@@ -84,9 +84,9 @@
           <el-input v-model="input3" disabled></el-input>
           <span class="blue copy" :data-clipboard-text='input3' @click="doCopy">复制</span>
         </p>
-        <p style="margin-top:20px">1.备注/附言/摘要中严格要求填写,每一次充值的编码都会变更,请核对后填写<br>2.支付宝不予审核<br>3.审核时间:周一至周五9:00-18:00 如遇节假日顺延,请合理安排充值时间<br>4.转款后无需私聊,工作日,30分钟内即可到款</p>
+        <p style="margin-top:36px;font-size:12px">1.备注/附言/摘要中严格要求填写,每一次充值的编码都会变更,请核对后填写<br>2.支付宝不予审核<br>3.审核时间:周一至周五9:00-18:00 如遇节假日顺延,请合理安排充值时间<br>4.转款后无需私聊,工作日,30分钟内即可到款</p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="danger" @click="transferMoney">确认转账</el-button>
+          <el-button type="danger" @click="transferMoney" :disabled="disabled">确认转账</el-button>
           <el-button @click="dialogVisible = false">先不转</el-button>
         </span>
       </el-dialog>
@@ -163,7 +163,8 @@ export default {
       options: [],
       getMon: '',
       item: '',
-      apiUrl: '/api/channel/recharge/getRechargeListByChannel'
+      apiUrl: '/api/channel/recharge/getRechargeListByChannel',
+      disabled: false
     }
   },
   created () {
@@ -238,6 +239,7 @@ export default {
     },
     // 当点击生确认转账的时候触发的事件
     transferMoney () {
+      this.disabled = true
       this.$ajax.post('/api/channel/recharge/addRechargeSheet', {
         userId: this.userInfo.channelAccountId,
         payingBankName: this.getBankInfo.payBankName,
@@ -264,9 +266,13 @@ export default {
               this.dialogVisible = false
               this.getList()
               this.input3 = ''
+              let that = this
+              setInterval(function () {
+                that.disabled = false
+              }, 2000)
             } else {
               this.$message({
-                message: data.data.message,
+                // message: data.data.message,
                 type: 'error'
               })
             }
