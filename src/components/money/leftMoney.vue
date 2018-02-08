@@ -439,8 +439,14 @@ export default {
     span
       color #444444
       font-weight 600
-  .payWrap p
-    margin-bottom 10px
-    .star
-      color #ff3341
+  .payWrap
+    color black
+    font-size 15px
+    p
+      margin-bottom 10px
+      font-size 14px
+      span
+        font-weight 600
+      .star
+        color #ff3341
 </style>
