@@ -164,6 +164,7 @@
           <el-input v-model="stationSetObj.adminAccount" :disabled="stationSetObj.type==0" style="width:153px;margin-left:10px;" placeholder="请输入内容"></el-input>
           <span style="display:inline-block;width:70px;text-align:right;">管理员密码</span>
           <el-input v-model="stationSetObj.adminPassword" type="password" style="width:153px;margin-left:10px;" placeholder="请输入内容"></el-input>
+          <p style="color: #ff3341;text-align:left;padding-left:120px;">注: 管理员帐号添加后不可修改!</p>
         </div>
         <div v-if="stationSetObj.type==0" class="cont" style="text-align:center;margin-top:20px;">
           <span style="display:inline-block;width:70px;text-align:right;">管理员帐号</span>
