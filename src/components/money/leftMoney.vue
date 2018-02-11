@@ -193,7 +193,6 @@ export default {
       this.$ajax.post('/api/channel/getBalance', {
         channelId: this.userInfo.channelId
       }).then((data) => {
-        console.log(data)
         if (data.data.code === '200') {
           this.getMon = data.data.data.balance
         } else {
@@ -203,7 +202,7 @@ export default {
           })
         }
       }).catch((err) => {
-        console.log(err)
+        console.error(err)
       })
     },
     doCopy () {
@@ -251,7 +250,6 @@ export default {
         comment: this.input3,
         money: this.input4 + '.' + this.pointNum
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.$ajax.post('/api/channel/recharge/confirmAlreadyPaid', {
@@ -277,7 +275,7 @@ export default {
               })
             }
           }).catch((err) => {
-            console.log(err)
+            console.error(err)
             this.$message.error('未知错误！')
           })
         } else {
@@ -287,7 +285,7 @@ export default {
           })
         }
       }).catch((err) => {
-        console.log(err)
+        console.error(err)
         this.$message.error('未知错误！')
       })
     },
@@ -296,7 +294,6 @@ export default {
       this.$ajax.post('/api/channel/recharge/getChannelRecipetContent', {
         channelAccountId: this.userInfo.channelAccountId
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.getBankInfo = {
@@ -317,7 +314,7 @@ export default {
           })
         }
       }).catch((err) => {
-        console.log(err)
+        console.error(err)
         this.$message.error('未知错误！')
       })
     },
@@ -340,12 +337,10 @@ export default {
     },
     // 点点击查看充值单触发的信息
     handleClick (index, data) {
-      console.log(index, data)
       this.toview = true
       this.$ajax.post('/api/channel/recharge/getRechargeSheetByRechargeId', {
         rechargeId: this.tableData[index].payWater
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let goods = {
@@ -367,7 +362,7 @@ export default {
           })
         }
       }).catch((err) => {
-        console.log(err)
+        console.error(err)
         this.$message.error('未知错误！')
       })
     },

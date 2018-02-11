@@ -93,7 +93,6 @@ export default {
       // this.numberArr = ''
     },
     isCanUse () {
-      console.log(this.picPassword)
       if (/^1[34578]\d{9}$/.test(this.phoneNum) && (this.picPassword === this.numberArr.toLowerCase() || this.picPassword === this.numberArr)) {
         this.isCan = true
         this.isSendMsg = true
@@ -107,7 +106,6 @@ export default {
         telephone: this.phoneNum,
         type: 1
       }).then((data) => {
-        console.log(data)
         if (data.data.code === '200') {
           this.$message({
             message: '发送成功',
@@ -162,7 +160,6 @@ export default {
         repeatPassword: md5(this.agpass),
         type: 1
       }).then((data) => {
-        console.log(data)
         if (data.data.code === '200') {
           this.$message({
             message: '注册成功',
@@ -171,8 +168,7 @@ export default {
           this.$ajax.post('/api/user/login', {
             telephone: data.data.data.telephone,
             password: md5(this.newpass)
-          }).then(data => {
-            console.log(data)
+          }).then((data) => {
             if (data.data.code === '200') {
               this.setUserInfo(data.data.data)
               this.setUserToken(data.headers.accesstoken)
@@ -200,7 +196,7 @@ export default {
         }
       }).catch((error) => {
         this.$message.error(error)
-        console.log(error)
+        console.error(error)
       })
     },
     ...mapActions([
@@ -223,7 +219,6 @@ export default {
       let w = 108
       let h = 30
       let ctx = this.$refs.cl.getContext('2d')
-      console.log(ctx)
       // 颜色定义
       ctx.fillStyle = this.color(180, 230)
       ctx.fillRect(0, 0, w, h)
@@ -247,7 +242,6 @@ export default {
         ctx.restore()
       }
       this.numberArr = arr.join('')
-      console.log(this.numberArr)
       // 干扰线
       for (let i = 0; i < 15; i++) {
         ctx.beginPath()

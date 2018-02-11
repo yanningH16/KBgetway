@@ -89,7 +89,7 @@ export default {
             })
           }
         }).catch((err) => {
-          console.log(err)
+          console.error(err)
           this.$message.error('服务器错误！')
         })
       }
