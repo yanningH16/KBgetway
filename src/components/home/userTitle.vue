@@ -21,6 +21,18 @@
           <strong>未认证</strong>
         </span>
       </div>
+      <div class="price">
+        <span>余额:
+          <strong>￥{{ priceObj.balance }}</strong>
+        </span>
+        <span>圆通:
+          <strong>￥{{ priceObj.price }}</strong>
+          元/单</span>
+        <span>预计放单数:
+          <strong>{{ numSum }}</strong>单
+        </span>
+        <em @click="$router.push({name: 'leftMoney'})">充值</em>
+      </div>
       <div class="info" @click="showInfo=!showInfo">
         <b class="head">
           Y
@@ -73,6 +85,7 @@ export default {
       showPass: false,
       showInfo: false,
       task: false,
+      priceObj: {},
       fixPassObj: {
         oldpass: '',
         newpass1: '',
@@ -81,9 +94,19 @@ export default {
     }
   },
   computed: {
+    numSum () {
+      let money = this.priceObj.balance
+      let price = this.priceObj.price
+      let num = 0
+      num = Math.floor(money / price) || 0
+      return num
+    },
     ...mapGetters([
       'userInfo'
     ])
+  },
+  watch: {
+    '$route': 'getPrice'
   },
   methods: {
     logout () {
@@ -119,7 +142,26 @@ export default {
       }).catch(() => {
         this.$message.error('服务器错误！')
       })
+    },
+    getPrice () {
+      this.$ajax.post('/api/channel/getBalance', {
+        channelId: this.userInfo.channelId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.priceObj = data.data.data
+        } else {
+          this.$message({
+            type: 'warning',
+            message: data.data.message
+          })
+        }
+      }).catch((err) => {
+        console.error(err)
+      })
     }
+  },
+  mounted () {
+    this.getPrice()
   }
 }
 </script>
@@ -135,9 +177,21 @@ export default {
     float right
     display flex
     line-height 100%
-    width 150px
+    // width 150px
+    width auto
     height 100%
     text-align right
+    padding 0 20px
+    .price
+      margin-right 20px
+      span
+        margin-right 10px
+      strong
+        color #ff3341
+        font-weight bold
+      em
+        cursor pointer
+        color #409EFF
     >div
       line-height 60px
     .record
