@@ -227,9 +227,9 @@ export default {
         })
         return false
       }
-      if (this.input4 < 100) {
+      if (this.input4 < 5000) {
         this.$message({
-          message: '单次充值不少于100元',
+          message: '单次充值不少于5000元',
           type: 'warning'
         })
         return false
