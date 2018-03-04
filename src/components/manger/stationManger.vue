@@ -13,7 +13,7 @@
     </div>
     <div class="table">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column fixed="left" prop="substationId" label="站点ID" align="center" width="185">
+        <el-table-column fixed="left" prop="substationId" label="站点ID" align="center" width="110">
         </el-table-column>
         <el-table-column prop="name" label="站点名称" align="center" width="200">
         </el-table-column>
@@ -80,8 +80,11 @@
           <el-input v-model="rechargeObj.common" style="width:300px;margin-left:10px;" placeholder="请输入内容"></el-input>
         </div>
         <div class="buttons" style="text-align:center;margin-top:40px;">
-          <span class="btn-b" style="margin-right:10px;" @click="rechargeObj.show = false">取消</span>
-          <span class="btn" @click="sureToRecharge">确定</span>
+          <!-- <span class="btn-b" style="margin-right:10px;" @click="rechargeObj.show = false">取消</span> -->
+          <span v-show="rechargeIsPosting" class="btn" @click="sureToRecharge">确定</span>
+          <span v-show="!rechargeIsPosting" class="btn">
+            <em class="el-icon-loading"></em>
+          </span>
         </div>
       </el-dialog>
       <el-dialog title="扣除余额" :append-to-body="true" :visible.sync="deleMoneyObj.show" width="600px" top="25vh">
@@ -94,8 +97,11 @@
           <el-input v-model="deleMoneyObj.common" style="width:300px;margin-left:10px;" placeholder="请输入内容"></el-input>
         </div>
         <div class="buttons" style="text-align:center;margin-top:40px;">
-          <span class="btn-b" style="margin-right:10px;" @click="deleMoneyObj.show = false">取消</span>
-          <span class="btn" @click="sureToDele">确定</span>
+          <!-- <span class="btn-b" style="margin-right:10px;" @click="deleMoneyObj.show = false">取消</span> -->
+          <span v-show="reduceIsPosting" class="btn" @click="sureToDele">确定</span>
+          <span v-show="!reduceIsPosting" class="btn">
+            <em class="el-icon-loading"></em>
+          </span>
         </div>
       </el-dialog>
       <el-dialog title="重置密码" :append-to-body="true" :visible.sync="resetPassObj.show" width="600px" top="25vh">
@@ -197,6 +203,8 @@ export default {
     return {
       apiUrl: '/api/substation/getPagingListBySubstationName',
       bankArr: [],
+      rechargeIsPosting: true, // 充值菊花
+      reduceIsPosting: true, // 扣除金额菊花
       substationName: '', // 搜索名
       currentPage: 1,
       rechargeObj: {
@@ -266,6 +274,7 @@ export default {
     },
     // 确认充值
     sureToRecharge () {
+      this.rechargeIsPosting = false // 打开菊花
       this.$ajax.post('/api/substation/recharge/addMoneyToSubstationFund', {
         money: this.rechargeObj.money,
         comment: this.rechargeObj.common,
@@ -284,6 +293,7 @@ export default {
               this.rechargeObj[m] = ''
             }
           }
+          this.rechargeIsPosting = true // 关闭菊花
         } else {
           this.$message({
             message: data.data.message,
@@ -297,6 +307,7 @@ export default {
     },
     // 确认扣除金额
     sureToDele () {
+      this.reduceIsPosting = false // 打开菊花
       this.$ajax.post('/api/substation/recharge/reduceMoneyFromSubstationFund', {
         money: this.deleMoneyObj.money,
         comment: this.deleMoneyObj.common,
@@ -315,6 +326,7 @@ export default {
               this.deleMoneyObj[m] = ''
             }
           }
+          this.reduceIsPosting = true // 关闭菊花
         } else {
           this.$message({
             message: data.data.message,

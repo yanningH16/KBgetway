@@ -11,7 +11,7 @@ module.exports = {
     assetsPublicPath: "/",
     proxyTable: {
       "/api": {
-        // target: 'http://182.61.29.51:8089', // 测试环境
+        // target: "http://182.61.29.51:8089", // 测试环境
         target: "http://18.218.181.216:8089", // 线上
         changeOrigin: true,
         pathRewrite: {
