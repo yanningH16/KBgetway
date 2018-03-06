@@ -48,6 +48,10 @@
         <el-table-column prop="payTypeDetail" label="付款方式" align="center" width="120">
         </el-table-column>
         <el-table-column prop="money" label="充值金额" align="center" width="120">
+          <template slot-scope="scope">
+            <span v-if="scope.row.instruction==='减钱'">-{{ scope.row.money }}</span>
+            <span v-else>{{ scope.row.money }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="beforMoney" label="充值前金额" align="center" width="120">
           <template slot-scope="scope">
